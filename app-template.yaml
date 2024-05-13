@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-flask-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sample-flask-app
+  template:
+    metadata:
+      labels:
+        app: sample-flask-app
+    spec:
+      containers:
+        - name: sample-flask-app
+          image: tiangolo/uwsgi-nginx-flask:python3.8
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-flask-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: sample-flask-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
