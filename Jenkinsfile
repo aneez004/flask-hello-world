@@ -14,7 +14,7 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject('aneez004-dev') {
-                            openshift.apply(file: 'kubernetes-manifests.yaml')
+                            openshift.apply(file: 'app-template.yaml')
                         }
                     }
                 }
