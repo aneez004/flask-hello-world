@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your/repo.git'
+            }
+        }
+
+        stage('List Files') {
+            steps {
+                sh 'ls -l'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build('your-image-name:tag', '-f Dockerfile .')
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://your-docker-registry', 'your-credentials-id') {
+                        docker.image('your-image-name:tag').push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to OpenShift') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject('aneez004-dev') {
+                            openshift.apply(file: 'kubernetes-manifests.yaml')
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
